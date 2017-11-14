@@ -1,10 +1,10 @@
 {
-  "name": "superagent-nock",
+  "name": "superagent-nock-patch",
   "version": "0.3.0",
   "description": "Mock superagent http requests",
   "repository": {
     "type": "git",
-    "url": "git@github.com:lowik/superagent-nock.git"
+    "url": "git@github.com:luzlab/superagent-nock.git"
   },
   "scripts": {
     "compile": "rimraf lib && babel src --out-dir lib --presets \"es2015\"",
