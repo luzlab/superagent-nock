@@ -1,9 +1,14 @@
+console.warn('This is an unmaintained fork of `superagent-nock`.');
+console.warn(
+	'Please switch to using the upstream package at https://www.npmjs.com/package/superagent-nock',
+);
+
 const methodsMapping = {
 	get: 'GET',
 	post: 'POST',
 	put: 'PUT',
 	del: 'DELETE',
-	patch: 'PATCH'
+	patch: 'PATCH',
 };
 
 function isFunction(obj) {
@@ -25,7 +30,7 @@ function buildRoute(method, url, reply) {
 	return {
 		method,
 		url: baseUrl + url,
-		reply
+		reply,
 	};
 }
 
@@ -57,7 +62,7 @@ mock.reply = (status, result) => {
 
 	currentRoute.reply = {
 		status,
-		result
+		result,
 	};
 
 	return mock; // chaining
@@ -74,7 +79,6 @@ function init(requestBaseUrl = '') {
 }
 
 export default function(superagent) {
-
 	// don't patch if superagent was patched already
 	if (superagent._patchedBySuperagentMocker) {
 		// mock.clear() // sheldon: added reset here
@@ -86,26 +90,27 @@ export default function(superagent) {
 	// Patch the end method to shallow the request and return the result
 	const reqProto = superagent.Request.prototype;
 	const oldEnd = reqProto.end;
-	reqProto.end = function end(cb) { // do not use function arrow to access to this.url and this.method
+	reqProto.end = function end(cb) {
+		// do not use function arrow to access to this.url and this.method
 		const route = routesMap[buildRouteKey(this.method, this.url)];
 		let reply = route && route.reply;
 		if (reply) {
 			if (isFunction(reply.status)) {
-				reply = reply.status(this.url) || {status: 500};
+				reply = reply.status(this.url) || { status: 500 };
 			}
 
 			// sheldon: the correct superagent behavior is to have res even in error case
 			const res = {
 				status: reply.status,
 				body: reply.result,
-				ok: true
+				ok: true,
 			};
 
 			let err;
 			if (reply.status >= 400) {
 				err = {
 					status: reply.status,
-					response: reply.result
+					response: reply.result,
 				};
 				res.ok = false;
 			}
@@ -118,16 +123,16 @@ export default function(superagent) {
 					res: {
 						headers: {},
 						setEncoding: () => {},
-						on: () => {}
+						on: () => {},
 					},
 					req: {
-						method: () => {}
+						method: () => {},
 					},
 					xhr: {
 						responseType: '',
 						getAllResponseHeaders: () => 'a header',
-						getResponseHeader: () => 'a header'
-					}
+						getResponseHeader: () => 'a header',
+					},
 				});
 				response.setStatusProperties(e.message);
 				cb && cb(e, response);
